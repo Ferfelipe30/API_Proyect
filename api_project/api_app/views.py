@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404, render
+from django.utils.dateparse import parse_date
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
@@ -118,3 +119,37 @@ class TareaByFechaLimite(generics.CreateAPIView):
             raise NotFound('No se encontro una tarea con esa fecha limite.')
         serializer = TareaSerializer(tarea)
         return Response({'success': True, 'detail': 'Tarea encontrada', 'data': serializer.data}, status=status.HTTP_200_OK)
+
+class TareaByRangoFechaLimite(generics.ListCreateAPIView):
+    queryset = Tarea.objects.all()
+    serializer_class = TareaSerializer
+
+    def list(self, request):
+        fecha_inicio = request.query_params.get('fecha_inicio')
+        fecha_fin = request.query_params.get('fecha_fin')
+        tareas = Tarea.objects.all()
+
+        if fecha_inicio and fecha_fin:
+            fecha_inicio_parsed = parse_date(fecha_inicio)
+            fecha_fin_parsed = parse_date(fecha_fin)
+            if not fecha_inicio_parsed or not fecha_fin_parsed:
+                return Response({'success': False, 'detail': 'Formato de fecha invalido. Use YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
+            tareas = tareas.filter(fecha_limite__range = [fecha_inicio_parsed, fecha_fin_parsed])
+
+        serializer = TareaSerializer(tareas, many=True)
+        if not tareas:
+            raise NotFound('No se encontraron tareas.')
+        return Response({'success': True, 'detail': 'Listado de tareas', 'data': serializer.data}, status=status.HTTP_200_OK) 
+
+class TareaPorPersona(generics.ListAPIView):
+    serializer_class = TareaSerializer
+
+    def get(self, request, tipo_documento, numero_documento):
+        persona = Persona.objects.filter(documento=numero_documento).first()
+        if not persona:
+            raise NotFound('No se encontro una persona con ese documento.')
+        tareas = Tarea.objects.filter(persona=persona)
+        serializer = TareaSerializer(tareas, many=True)
+        if not tareas:
+            raise NotFound('No se encontraron tareas para esta persona.')
+        return Response({'success': True, 'detail': 'Listado de tareas para la persona', 'data': serializer.data}, status=status.HTTP_200_OK)
