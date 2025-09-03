@@ -40,20 +40,34 @@ Asegúrate de tener instalado Python 3.8+ y pip.
     ```
 
 3.  **Instala las dependencias**
-    (Asegúrate de tener un archivo `requirements.txt` con las librerías como Flask o FastAPI)
+    (Asegúrate de tener un archivo `requirements.txt` con las librerías como Django y Django REST Framework)
     ```sh
+    pip install django djangorestframework psycopg2
+    django-admin startproject api
+    cd api_project
+    django-admin startapp api_app
     pip install -r requirements.txt
     ```
 
-4.  **Ejecuta la aplicación**
-    (Este comando puede variar dependiendo del framework que uses)
+4.  **Aplica las migraciones de la base de datos**
+    Este comando prepara la base de datos con el esquema necesario para la aplicación.
     ```sh
-    # Ejemplo para Flask
-    flask run
-
-    # Ejemplo para FastAPI con uvicorn
-    uvicorn main:app --reload
+    python manage.py makemigrations
+    python manage.py migrate
     ```
+
+5. **Ejecutar las migraciones**
+    Se realizaran prepaciones para las migraciones.
+    ```sh
+    python manage.py makemigrations api_app
+    python manage.py migrate
+    ```
+
+6.  **Ejecuta el servidor de desarrollo**
+    ```sh
+    python manage.py runserver
+    ```
+    La API estará disponible en `http://127.0.0.1:8000/`.
 
 ## ⚙️ Uso de la API (Endpoints)
 
@@ -85,3 +99,9 @@ Las contribuciones son lo que hace que la comunidad de código abierto sea un lu
 4.  Empuja a la rama (`git push origin feature/AmazingFeature`).
 5.  Abre una Pull Request.
 
+## Postman
+
+Proyecto en Postman
+```
+https://documenter.getpostman.com/view/43047513/2sB3HjM1uk
+```
