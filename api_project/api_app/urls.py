@@ -1,7 +1,8 @@
 from django.urls import path
 from .views import (
     PersonaList, PersonaByDocumento, ActualizarPersona, CrearPersona, EliminarPersona,
-    TareaList, CrearTarea, ActualizarTarea, EliminarTarea, TareaByFechaLimite
+    TareaList, CrearTarea, ActualizarTarea, EliminarTarea, TareaByFechaLimite,
+    TareaByRangoFechaLimite, TareaPorPersona
 )
 
 urlpatterns = [
@@ -14,5 +15,7 @@ urlpatterns = [
     path('tareas/crear/', CrearTarea.as_view(), name='tarea-crear'),
     path('tareas/actualizar/<int:pk>/', ActualizarTarea.as_view(), name='tarea-actualizar'),
     path('tareas/eliminar/<int:pk>/', EliminarTarea.as_view(), name='tarea-eliminar'),
-    path('tareas/fecha_limite/<str:fecha_limite>/', TareaByFechaLimite.as_view(), name='tarea-por-fecha-limite')
+    path('tareas/fecha_limite/<str:fecha_limite>/', TareaByFechaLimite.as_view(), name='tarea-por-fecha-limite'),
+    path('tareas/rango_fecha_limite/', TareaByRangoFechaLimite.as_view(), name='tarea-por-rango-fecha-limite'),
+    path('tareas/persona/<str:tipo_documento>/<str:numero_documento>/', TareaPorPersona.as_view(), name='tarea-por-persona'),
 ]
